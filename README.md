@@ -15,3 +15,6 @@ Create the application: stock-prediction-cs145
 Generate access token and token secret.
 
 Use GetOldTweets-python to get the target tweets.
+
+Install textblob
+> pip install textblob
