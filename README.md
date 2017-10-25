@@ -18,3 +18,6 @@ Use GetOldTweets-python to get the target tweets.
 
 Install textblob
 > pip install textblob
+
+Install pandas-datareader
+> pip install pandas-datareader
