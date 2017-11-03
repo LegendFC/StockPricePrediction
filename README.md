@@ -28,3 +28,6 @@ To crawl the old Tweets, type command
 
 To crawl the real time Tweets, type command
 > python src/GetTweets/getRealtimeTweets.py --querysearch="Google"
+
+To crawl the stock price, type command
+>python src/GetDJIA/djia.py --symbol='GOOG' --since='2017-01-01' --until='2017-10-01'
