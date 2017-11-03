@@ -24,3 +24,7 @@ Install pandas-datareader
 
 To crawl the old Tweets, type command
 > python src/GetTweets/getOldTweets.py --querysearch="Google" --since 2017-01-01 --until 2017-11-01
+
+
+To crawl the real time Tweets, type command
+> python src/GetTweets/getRealtimeTweets.py --querysearch="Google"
