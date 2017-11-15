@@ -1,0 +1,1 @@
+python src/GetTweets/getOldTweets.py --querysearch="Google" --since 2017-11-01 --until 2017-11-02 --stdout=True --isJson=True --output=sample_tweets.json --maxtweets=100

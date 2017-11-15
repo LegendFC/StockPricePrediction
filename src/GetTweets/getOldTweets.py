@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import sys,getopt,datetime,codecs,textblob,re
+import sys,getopt,datetime,codecs,textblob,re,json
 if sys.version_info[0] < 3:
     import got
 else:
@@ -19,10 +19,14 @@ def main(argv):
 		return
 
 	try:
-		opts, args = getopt.getopt(argv, "", ("username=", "near=", "within=", "since=", "until=", "querysearch=", "toptweets", "maxtweets=", "output="))
+		opts, args = getopt.getopt(argv, "", ("username=", "near=", "within=", "since=", "until=", "querysearch=", "toptweets", "maxtweets=", "output=", "stdout=", "isJson=", 'count='))
 
 		tweetCriteria = got.manager.TweetCriteria()
 		outputFileName = "output_got.csv"
+		isStdOut = False
+		isJson = False
+		count = 0
+		targetCount = -1
 
 		for opt,arg in opts:
 			if opt == '--username':
@@ -54,10 +58,20 @@ def main(argv):
 
 			elif opt == '--output':
 				outputFileName = arg
-				
+
+			elif opt == '--stdout':
+				isStdOut = True
+			
+			elif opt == '--isJson':
+				isJson = True
+
+			elif opt == '--count':
+				targetCount = arg
+
 		outputFile = codecs.open(outputFileName, "w+", "utf-8")
 
-		outputFile.write('username;date;retweets;favorites;text;geo;mentions;hashtags;id;permalink')
+		if not isJson:
+			outputFile.write('username;date;retweets;favorites;text;geo;mentions;hashtags;id;permalink;attitude')
 
 		print('Searching...\n')
 
@@ -66,15 +80,22 @@ def main(argv):
 
 		def receiveBuffer(tweets):
 			for t in tweets:
-				outputFile.write(('\n%s;%s;%d;%d;"%s";%s;%s;%s;"%s";%s' % (t.username, t.date.strftime("%Y-%m-%d %H:%M"), t.retweets, t.favorites, t.text, t.geo, t.mentions, t.hashtags, t.id, t.permalink)))
-				analysis = textblob.TextBlob(clean_tweet(t.text))
 				# set sentiment
+				analysis = textblob.TextBlob(clean_tweet(t.text))
+				sentiment = 'negative'
 				if analysis.sentiment.polarity > 0:
-				    print 'positive'
+				    sentiment = 'positive'
 				elif analysis.sentiment.polarity == 0:
-				    print 'neutral'
+				    sentiment = 'neutral'
+
+				if isStdOut:
+					print t.username + "\n" + t.text + "\n" + t.date.strftime("%Y-%m-%d %H:%M") + "\n" + t.geo
+				if isJson:
+					json.dump({'username': t.username, 'time': t.date.strftime("%Y-%m-%d %H:%M"), 'text': t.text, 'geo': t.geo}, outputFile)
+					outputFile.write('\n')
 				else:
-				    print 'negative'
+					outputFile.write(('\n%s;%s;%d;%d;"%s";%s;%s;%s;"%s";%s;%s' % (t.username, t.date.strftime("%Y-%m-%d %H:%M"), t.retweets, t.favorites, t.text, t.geo, t.mentions, t.hashtags, t.id, t.permalink, sentiment)))
+
 			outputFile.flush();
 			print('More %d saved on file...\n' % len(tweets))
 
