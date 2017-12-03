@@ -19,6 +19,9 @@ Use GetOldTweets-python to get the target tweets.
 Install textblob
 > pip install textblob
 
+Install download_corpora
+> python -m textblob.download_corpora
+
 Install pandas-datareader
 > pip install pandas-datareader
 

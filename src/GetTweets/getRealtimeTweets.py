@@ -1,8 +1,16 @@
-import tweepy,getopt,sys
+import tweepy,getopt,sys,TweetProcessor
 #override tweepy.StreamListener to add logic to on_status
 class MyStreamListener(tweepy.StreamListener):
+	def __init__(self):
+		self.processor = TweetProcessor.processor()
+
+	def clean_tweet(self, tweet):
+		return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", tweet).split())
+
 	def on_status(self, status):
-		print(status.text)
+		analysis = textblob.TextBlob(self.clean_tweet(status.text))
+		print ('\n%s;%s;%s;%s;%s;%s;%s' % (processor.getSentiment(analysis),processor.getDetailSentiment(analysis), processor.getSubjectivity(analysis), processor.getDetailSubjectivity(analysis),\
+																processor.getNumWords(analysis), processor.getNumSentences(analysis), processor.getNumNouns(analysis)))
 
 consumer_key = "CCTQiQkVMkLwlsRslD6DhBJOU"
 consumer_secret = "dpJdX1xFdDk3o0baxSiNhd2WbDhr9VJUkmOUZLKVjJCMHgO87h"

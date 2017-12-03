@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys,getopt,datetime,codecs,textblob,re,json
+import TweetProcessor
+
 if sys.version_info[0] < 3:
     import got
 else:
@@ -71,8 +73,8 @@ def main(argv):
 		outputFile = codecs.open(outputFileName, "w+", "utf-8")
 
 		if not isJson:
-			outputFile.write('username;date;retweets;favorites;text;geo;mentions;hashtags;id;permalink;attitude')
-
+			outputFile.write('sentiment;detailSentiment;subjectivity;detailSubjectivity;numWords;numSentences;numNouns')
+		processor = TweetProcessor.processor()
 		print('Searching...\n')
 
 		def clean_tweet(tweet):
@@ -82,19 +84,16 @@ def main(argv):
 			for t in tweets:
 				# set sentiment
 				analysis = textblob.TextBlob(clean_tweet(t.text))
-				sentiment = 'negative'
-				if analysis.sentiment.polarity > 0:
-				    sentiment = 'positive'
-				elif analysis.sentiment.polarity == 0:
-				    sentiment = 'neutral'
-
+				text = clean_tweet(t.text)
 				if isStdOut:
 					print t.username + "\n" + t.text + "\n" + t.date.strftime("%Y-%m-%d %H:%M") + "\n" + t.geo
 				if isJson:
 					json.dump({'username': t.username, 'time': t.date.strftime("%Y-%m-%d %H:%M"), 'text': t.text, 'geo': t.geo}, outputFile)
 					outputFile.write('\n')
 				else:
-					outputFile.write(('\n%s;%s;%d;%d;"%s";%s;%s;%s;"%s";%s;%s' % (t.username, t.date.strftime("%Y-%m-%d %H:%M"), t.retweets, t.favorites, t.text, t.geo, t.mentions, t.hashtags, t.id, t.permalink, sentiment)))
+					analysis = textblob.TextBlob(text)
+					outputFile.write(('\n%s;%s;%s;%s;%s;%s;%s' % (processor.getSentiment(analysis),processor.getDetailSentiment(analysis), processor.getSubjectivity(analysis), processor.getDetailSubjectivity(analysis),\
+																processor.getNumWords(analysis), processor.getNumSentences(analysis), processor.getNumNouns(analysis))))
 
 			outputFile.flush();
 			print('More %d saved on file...\n' % len(tweets))
