@@ -146,7 +146,7 @@ class BPNeuralNetwork:
         predict_list = []
         labels_train,cases_train,labels_test,cases_test=[],[],[],[]
 
-        cases,labels = getdatalabel('data.txt','price.txt')
+        cases,labels = getdatalabel('TXN_data.txt','TXN_price.txt')
         
         #train part
         
