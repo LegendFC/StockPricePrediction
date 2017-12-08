@@ -1,2 +1,4 @@
 modelresult.png
+src/GetTweets/got/*.pyc
+src/GetTweets/got/manager/*.pyc
 *.pyc
