@@ -7,7 +7,7 @@ from collections import Counter
 def getdatalabel(fileofdata,fileoflabel):
     
     data = pd.read_csv(fileofdata, sep="\t", index_col=None)
-    price = pd.read_csv(fileoflabel, sep="\t", index_col=None)
+    price = pd.read_csv(fileoflabel, sep=",", index_col=None)
     
     sentiment_count = data.groupby(['date', 'sentiment']).size().reset_index(name='counts')
     subjectivity_count = data.groupby(['date', 'subjectivity']).size().reset_index(name='counts')

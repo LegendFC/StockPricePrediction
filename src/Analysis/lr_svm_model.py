@@ -19,7 +19,7 @@ from collections import OrderedDict
 # load tweet data and price data
 # from 12/01/2016 to 11/30/2017
 data = pd.read_csv('TXN_data.txt', sep="\t", index_col=None)
-price = pd.read_csv('TXN_price.txt', sep="\t", index_col=None)
+price = pd.read_csv('TXN_price.txt', sep=",", index_col=None)
 
 # summarize everyday sentiment and subjectivity statistics or counts
 sentiment_count = data.groupby(['date', 'sentiment']).size().reset_index(name='counts')

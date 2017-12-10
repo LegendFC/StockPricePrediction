@@ -1,24 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Nov 11 20:33:24 2017
+Created on Tue Dec 2 15:23:54 2017
+
 @author: ericd
 """
 
 import math
 import random
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from txn2 import getdatalabel
 
 random.seed(0)
-
-
-def getDataframe(filePath):
-    dataframe = pd.read_csv(filePath, sep="\t", index_col=None)
-    y = dataframe['Close']
-    x = dataframe.drop(['Close','Volume'], axis=1)
-    return x, y
 
 def applyminmax(dataframe):
     x = np.array(dataframe)
@@ -104,6 +98,7 @@ class BPNeuralNetwork:
             for j in range(self.hidden_n):
                 total += self.hidden_cells[j] * self.output_weights[j][k]
             self.output_cells[k] = sigmoid(total)
+
         return self.output_cells[:]
 
     def back_propagate(self, case, label, learn, correct):
@@ -111,7 +106,7 @@ class BPNeuralNetwork:
         # get output layer error
         output_deltas = [0.0] * self.output_n
         for o in range(self.output_n):
-            error = label[o] - self.output_cells[o]
+            error = label - self.output_cells
             output_deltas[o] = sigmoid_derivative(self.output_cells[o]) * error
             
         # get hidden layer error
@@ -135,66 +130,47 @@ class BPNeuralNetwork:
                 self.input_correction[i][h] = change
 
         error = 0.0
-        for o in range(len(label)):
-            error += 0.5 * (label[o] - self.output_cells[o]) ** 2
+        error += 0.5 * (label - self.output_cells) ** 2
         return error
 
     def train(self, cases, labels, limit=10000, learn=0.05, correct=0.1):
         for j in range(limit):
             error = 0.0
             for i in range(len(cases)):
-                case = cases[i]
                 label = labels[i]
+                case = cases[i]
                 error += self.back_propagate(case, label, learn, correct)
-
+            
     def test(self):
         
-        pat_x = []
-        labels = []
-        cases = []
-        test_x, test_y = getDataframe('output_got.txt')
         predict_list = []
         labels_train,cases_train,labels_test,cases_test=[],[],[],[]
-        for i in range(len(test_y)):
-            pat_x=test_x.values[i][1:]
-            labels.append([test_y.values[i]])
-            cases.append(pat_x)
-        
-        labels[:]=labels[1:]
-        cases[:]=cases[:-1]
+
+        cases,labels = getdatalabel('TXN_data.txt','TXN_price.txt')
         
         #train part
         
         labels_train[:] = labels[1::2] #even index to get train data
         cases_train[:] = cases[1::2]
-        '''
-        labels_train[:] = labels[:len(labels)//2] #half data
-        cases_train[:] = cases[:len(labels)//2]
-        '''
+
         minmaxcases_train = applyminmax(cases_train)
         minmaxlabels_train = applyminmax(labels_train)
         
-        self.setup(4, 5, 1)
+        self.setup(8, 5, 1)
         self.train(minmaxcases_train, minmaxlabels_train, 10000, 0.05, 0.1)
         
         #test part
         
         labels_test[:] = labels[::2] #odd index to get test data
         cases_test[:] = cases[::2]
-        '''
-        labels_test[:] = labels[len(labels)//2:] #half data
-        cases_test[:] = cases[len(labels)//2:]
-        '''
-        x = np.array(labels_test)
-        amax=x.max(axis = 0)
-        amin=x.min(axis = 0)
         
+        labels_test[:] =  applyminmax(labels_test)  
         minmaxcases_test = applyminmax(cases_test)
-               
+        
         for case in minmaxcases_test:
-            predict = self.predict(case)*(amax-amin)+amin
+            predict = self.predict(case)
             predict_list.append(predict)
-            
+                   
         compute_mse(predict_list, labels_test)
             
         plt.title('Stock price prediction')
@@ -202,9 +178,10 @@ class BPNeuralNetwork:
         plt.plot(labels_test,label="true price")
         plt.plot(predict_list,label='predicted price')
         plt.legend()
-        savefig('NN_price.png')
+        plt.savefig('NN_emotion.png')
         
 
 if __name__ == '__main__':
     nn = BPNeuralNetwork()
     nn.test()
+

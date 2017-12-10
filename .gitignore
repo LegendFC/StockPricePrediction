@@ -1,4 +1,6 @@
 modelresult.png
+NN_emotion.png
+NN_price.png
 src/GetTweets/got/*.pyc
 src/GetTweets/got/manager/*.pyc
 *.pyc

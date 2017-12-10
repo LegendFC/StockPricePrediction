@@ -73,7 +73,7 @@ def main(argv):
 		outputFile = codecs.open(outputFileName, "w+", "utf-8")
 
 		if not isJson:
-			outputFile.write('sentiment;detailSentiment;subjectivity;detailSubjectivity;numWords;numSentences;numNouns')
+			outputFile.write('date\tsentiment\tdetailSentiment\tsubjectivity\tdetailSubjectivity\tnumWords\tnumSentences\tnumNouns')
 		processor = TweetProcessor.processor()
 		print('Searching...\n')
 
@@ -92,7 +92,7 @@ def main(argv):
 					outputFile.write('\n')
 				else:
 					analysis = textblob.TextBlob(text)
-					outputFile.write(('\n%s;%s;%s;%s;%s;%s;%s' % (processor.getSentiment(analysis),processor.getDetailSentiment(analysis), processor.getSubjectivity(analysis), processor.getDetailSubjectivity(analysis),\
+					outputFile.write(('\n%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (t.date.strftime("%Y-%m-%d"), processor.getSentiment(analysis),processor.getDetailSentiment(analysis), processor.getSubjectivity(analysis), processor.getDetailSubjectivity(analysis),\
 																processor.getNumWords(analysis), processor.getNumSentences(analysis), processor.getNumNouns(analysis))))
 
 			outputFile.flush();
