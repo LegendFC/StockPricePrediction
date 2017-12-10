@@ -5,17 +5,6 @@ This project is the course project from CS145 in UCLA.
 First, install tweepy:
 > pip install tweepy
 
-Signup the tweet account:
-Username: tu_yukai
-Phone: 3105629182
-Password: cs145cs145
-
-Create the application: stock-prediction-cs145
-
-Generate access token and token secret.
-
-Use GetOldTweets-python to get the target tweets.
-
 Install textblob
 > pip install textblob
 
@@ -25,12 +14,6 @@ Install download_corpora
 Install pandas-datareader
 > pip install pandas-datareader
 
-To crawl the old Tweets, type command
-> python src/GetTweets/getOldTweets.py --querysearch="Google" --since 2017-01-01 --until 2017-11-01
+The code have three different components under the src directory: Analysis, GetDJIA and GetTweets. GetTweets can get the tweets from Tiwtter based on the keyword, start time and end time; GetDJIA can crawl the data from the YahooFinance with specific company code; Anaysis directory contains three different model which use the tweets as the input and generate the output result.
 
-
-To crawl the real time Tweets, type command
-> python src/GetTweets/getRealtimeTweets.py --querysearch="Google"
-
-To crawl the stock price, type command
-> python src/GetDJIA/djia.py --symbol='GOOG' --since='2017-01-01' --until='2017-10-01'
+The run.sh will analysis the data using three provided models. It may cost 10 minutes to generate the results. The result will be saved into the files:modelresult.png, NN_emotion.png and NN_price.png. The result should be the same with the picture in our report.
